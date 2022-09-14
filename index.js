@@ -4,9 +4,8 @@ const db = require('./products.json')
 const dbProdAdvice = require('./productsAdvice.json')
 const mongoose = require('mongoose')
 const fs = require('fs')
-const {register} = require('./Controllers/register')
 const {login} = require('./Controllers/login')
-const {logout} = require('./Controllers/logout')
+const {register} = require('./Controllers/register')
 require('dotenv').config()
 
 mongoose.connect(
