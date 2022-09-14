@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const UserSchema = require('../Schemas/UserSchema')
+const searches = require('./models/searches');
 const fs = require('fs')
 require('dotenv').config()
 
