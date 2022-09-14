@@ -11,7 +11,7 @@ require('dotenv').config()
 mongoose.connect(
     process.env.MONGODB_URI || 'mongodb+srv://admin:admin@cluster0.0eazcat.mongodb.net/?retryWrites=true&w=majority'
 ).then(() => {
-    app.listen(process.env.PORT || port, () => {
+    app.listen(port, () => {
         return console.log(`server has been started on ${port}`);
     })
 })
@@ -21,7 +21,7 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
-const port = 4444
+const port = 4444 || process.env.PORT
 
 app.get('/', (req, res) => {
     return res.json(db)
