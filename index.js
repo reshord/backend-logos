@@ -3,9 +3,10 @@ const cors = require('cors')
 const db = require('./products.json')
 const dbProdAdvice = require('./productsAdvice.json')
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const UserSchema = require('../Schemas/UserSchema')
 const fs = require('fs')
-const {login} = require('./Controllers/login')
-const {register} = require('./Controllers/register')
 require('dotenv').config()
 
 mongoose.connect(
@@ -31,5 +32,78 @@ app.get('/cart', (req, res) => {
     return res.json(dbProdAdvice)
 })
 
-app.post('/auth/register', register)
-app.post('/auth/login', login)
+app.post('/auth/register', async () => {
+    try {
+        const {email, password, confirmPassword} = req.body
+
+        if(confirmPassword !== password) {
+            return res.status(404).json({
+                message: 'Пароли не совпадают'
+            })
+        }
+
+        const isUser = await UserSchema.findOne({email})
+       
+        if(isUser) {
+            return res.status(404).json({message: 'Пользователь уже существует'})
+        }
+
+        const salt = bcrypt.genSaltSync(10)
+        const hash = bcrypt.hashSync(password, salt)
+        const hash2 = bcrypt.hashSync(confirmPassword, salt)
+
+        const user = UserSchema({
+            email,
+            password: hash,
+            confirmPassword: hash2
+        })
+
+        const token = jwt.sign({
+            id: user._id,
+        }, 'secretWord', {expiresIn: '1h'})
+
+        await user.save()
+
+        return res.status(200).json({
+            user,
+            token,
+            message: 'Учетная запись успешно создана'
+        })
+
+    }catch (e) {
+        console.error(e);
+    }
+})
+app.post('/auth/login', async (req, res) => {
+    try {
+        const {email, password} = req.body
+        const isUser = await UserSchema.findOne({email})
+
+        if(!isUser) {
+            return res.status(404).json({
+                message: 'Пользователя с такой почтой не существует'
+            })
+        }
+
+        const isCorrectPassword = bcrypt.compare(password, isUser.password)
+
+        if(!isCorrectPassword) {
+            return res.status(404).json({
+                message: 'Неверный пароль'
+            })
+        }
+
+        const token = jwt.sign({
+            id: isUser._id,
+        }, 'secretWord', {expiresIn: '1h'})
+
+        return res.json({
+            email,
+            token,
+            message: 'Авторизация прошла успешно'
+        })
+
+    }catch (e) {
+        console.error(e);
+    }
+})
