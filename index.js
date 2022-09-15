@@ -6,13 +6,12 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const UserSchema = require('./Schemas/UserSchema')
-const fs = require('fs')
 require('dotenv').config()
 
 mongoose.connect(
     process.env.MONGODB_URI || 'mongodb+srv://admin:admin@cluster0.0eazcat.mongodb.net/?retryWrites=true&w=majority'
 ).then(() => {
-    app.listen(port, () => {
+    app.listen(port || process.env.PORT, () => {
         return console.log(`server has been started on ${port}`);
     })
 })
@@ -22,7 +21,7 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
-const port = 4444 || process.env.PORT
+const port = 4444 
 
 app.get('/', (req, res) => {
     return res.json(db)
