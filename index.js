@@ -31,7 +31,7 @@ app.get('/cart', (req, res) => {
     return res.json(dbProdAdvice)
 })
 
-app.post('/auth/register', async () => {
+app.post('/auth/register', async (req, res) => {
     try {
         const {email, password, confirmPassword} = req.body
 
