@@ -5,8 +5,7 @@ const dbProdAdvice = require('./productsAdvice.json')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const UserSchema = require('../Schemas/UserSchema')
-const searches = require('./models/searches');
+const UserSchema = require('./Schemas/UserSchema')
 const fs = require('fs')
 require('dotenv').config()
 
